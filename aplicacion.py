@@ -27,13 +27,13 @@ if opcion == "1":
     print("Ha seleccionado la opción 1: Consultar fecha de despacho de un expediente.\n")
     # Pedir expte al usuario
     expte = input('Por favor, ingrese el número de expediente: ')
-    consulta = f"SELECT Fecha FROM despachos WHERE expediente = '{expte}' ORDER BY fecha DESC LIMIT 1"
+    consulta = f"SELECT Fecha, Orden FROM despachos WHERE expediente = '{expte}' ORDER BY fecha DESC LIMIT 1"
     cursor.execute(consulta)
     # Obtener los resultados de la consulta
     resultados = cursor.fetchall()
     # Imprimir los resultados
     if len(resultados) > 0:
-        print(f"El expediente {expte} salió en la lista de despacho del día {resultados[0][0]}.")
+        print(f"El expediente {expte} salió en la lista de despacho del día {resultados[0][0]}, en el orden {resultados[0][1]}.")
         print('Muchas gracias por usar nuestro Servicios de Chat.')
     else:
         print(f"No se encontró el expediente {expte} en la lista de despacho.")
@@ -43,16 +43,23 @@ elif opcion == "2":
     # Pedir fecha al usuario
     fecha_str = input("Por favor, ingrese la fecha que desea en formato DD/MM/AAAA: ")
     fecha = datetime.strptime(fecha_str, '%d/%m/%Y').date()
-    fecha = fecha.strftime('%Y-%m-%d')
-    consulta_fecha = f"SELECT * FROM despachos WHERE Fecha = {fecha}"
+    fecha_sql = fecha.strftime('%Y-%m-%d')
+    consulta_fecha = f"SELECT Orden, Expediente, Caratula FROM despachos WHERE Fecha = '{fecha_sql}'"
     cursor.execute(consulta_fecha)
     resultado_fecha = cursor.fetchall()
+    encabezado = 'Lista de despacho'
+    encabezado_1 = 'Juzgado de Niñez, Adolescencia y Familia n° 01'
+    encabezado_2 =  f'Correspondiente al día:{fecha_str}'
+    print(separador)
+    print('|',encabezado.center(61),'|')
+    print('|',encabezado_1.center(61),'|')
+    print('|',encabezado_2.center(61),'|')
+    print(separador)
     if len(resultado_fecha) > 0:
-        for resultado in resultado_fecha:
-            print(resultado)
+        for i in resultado_fecha:
+            print (i)
     else:
         print (f"no se encontró la fecha {fecha_str}")
-    
 else:
     # Opción inválida
     print("Opción inválida. Por favor, seleccione una opción válida (1 o 2).")
